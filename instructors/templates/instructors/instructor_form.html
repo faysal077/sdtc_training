@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3 text-center">{{ title }}</h3>
+  <div class="card shadow p-4">
+    <form id="instructorForm" method="post" action="">
+      {% csrf_token %}
+      <div id="formErrors" class="alert alert-danger d-none"></div>
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success w-100">💾 Save Instructor</button>
+    </form>
+  </div>
+
+  <div id="successMsg" class="alert alert-success mt-3 d-none text-center">
+    ✅ Instructor added successfully!
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#instructorForm").submit(function(e){
+        e.preventDefault();
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: "",
+            method: "POST",
+            data: formData,
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            success: function(response){
+                if(response.success){
+                    $("#formErrors").addClass("d-none");
+                    $("#successMsg").removeClass("d-none").fadeIn();
+                    $("#instructorForm")[0].reset();
+                    setTimeout(() => $("#successMsg").fadeOut(), 3000);
+                } else {
+                    let errors = "";
+                    for(let field in response.errors){
+                        errors += `<strong>${field}:</strong> ${response.errors[field].join(', ')}<br>`;
+                    }
+                    $("#formErrors").html(errors).removeClass("d-none");
+                }
+            },
+            error: function(){
+                $("#formErrors").html("⚠️ Something went wrong!").removeClass("d-none");
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

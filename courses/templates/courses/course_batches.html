@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Batches</title>
+</head>
+<body>
+    <h2>Batches for {{ course.Course_name }}</h2>
+    {% if batches %}
+        <ul>
+        {% for batch in batches %}
+            <li>{{ batch.name }} - {{ batch.start_date }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No batches available for this course yet.</p>
+    {% endif %}
+    <a href="{% url 'courses:course_list' %}">Back</a>
+</body>
+</html>

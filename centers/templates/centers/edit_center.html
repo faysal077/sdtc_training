@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Center</title>
+</head>
+<body>
+    <h2>Edit Center</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Center Name:</label><input type="text" name="Center_name" value="{{ center.Center_name }}" required><br>
+        <label>Establishment Year:</label><input type="datetime-local" name="Establishment_year" value="{{ center.Establishment_year|date:'Y-m-d\TH:i' }}" required><br>
+        <label>District:</label><input type="text" name="District" value="{{ center.District }}" required><br>
+        <label>RD Office:</label><input type="text" name="RD_office" value="{{ center.RD_office }}"><br>
+        <label>Officer in Charge:</label><input type="text" name="Officer_in_charge" value="{{ center.Officer_in_charge }}"><br>
+        <label>Username:</label><input type="text" name="username" value="{{ center.username }}" required><br>
+        <label>Password:</label><input type="text" name="password" value="{{ center.password }}" required><br>
+        <button type="submit">Update</button>
+    </form>
+    <a href="{% url 'list' %}">Back</a>
+</body>
+</html>

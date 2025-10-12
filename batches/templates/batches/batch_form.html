@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if form.instance.pk %}Edit Batch{% else %}Add Batch{% endif %}</title>
+</head>
+<body>
+    <h2>{% if form.instance.pk %}Edit Batch{% else %}Add New Batch{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{% if form.instance.pk %}Update{% else %}Save{% endif %}</button>
+    </form>
+    <a href="{% url 'batch_list' %}">Back</a>
+</body>
+</html>

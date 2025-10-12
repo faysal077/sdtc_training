@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow p-4">
+    <h3 class="mb-3">{{ title }}</h3>
+
+    <form id="budgetForm" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Save</button>
+      <a href="{% url 'budget:list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+
+<!-- Toastify.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.getElementById("budgetForm");
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    fetch("", {
+      method: "POST",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        Toastify({
+          text: data.message,
+          backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+          duration: 3000
+        }).showToast();
+
+        form.reset();
+      } else {
+        let errorText = "";
+        for (let field in data.errors) {
+          errorText += `${field}: ${data.errors[field].join(", ")}\n`;
+        }
+        Toastify({
+          text: errorText,
+          backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+          duration: 4000
+        }).showToast();
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      Toastify({
+        text: "Something went wrong!",
+        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+        duration: 4000
+      }).showToast();
+    });
+  });
+});
+</script>
+{% endblock %}

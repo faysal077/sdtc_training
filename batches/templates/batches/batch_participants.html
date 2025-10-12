@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Batch Participants</title>
+</head>
+<body>
+    <h2>Participants for Batch {{ batch.id }}</h2>
+    {% if participants %}
+        <ul>
+            {% for p in participants %}
+                <li>{{ p.Name }} - {{ p.Job_status }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No participants registered yet.</p>
+    {% endif %}
+    <a href="{% url 'batch_list' %}">Back</a>
+</body>
+</html>

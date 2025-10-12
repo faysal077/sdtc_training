@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-header bg-success text-white text-center py-3 rounded-top-4">
+        <h4 class="mb-0">{{ title }}</h4>
+      </div>
+      <div class="card-body p-4">
+        <form id="inventoryForm" method="post" class="needs-validation" novalidate>
+          {% csrf_token %}
+
+          <!-- Horizontally aligned form -->
+          {% for field in form %}
+          <div class="row mb-3 align-items-center">
+            <label class="col-sm-4 col-form-label fw-semibold text-end">
+              {{ field.label }}
+            </label>
+            <div class="col-sm-8">
+              {{ field }}
+              {% if field.errors %}
+              <div class="text-danger small">{{ field.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+
+          <div class="mt-4">
+            <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
+              💾 Save Item
+            </button>
+            <a href="{% url 'inventory:list' %}" class="btn btn-secondary w-100 mt-2 py-2 fw-semibold">
+              ↩️ Back to List
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toastify -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+document.getElementById("inventoryForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  const response = await fetch("", {
+    method: "POST",
+    body: formData,
+    headers: { "X-Requested-With": "XMLHttpRequest" }
+  });
+
+  const data = await response.json();
+
+  if (data.success) {
+    Toastify({
+      text: data.message,
+      backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      duration: 3000,
+      close: true
+    }).showToast();
+    form.reset();
+  } else {
+    let errorText = "";
+    for (let key in data.errors) {
+      errorText += `${key}: ${data.errors[key].join(", ")}\n`;
+    }
+    Toastify({
+      text: errorText || "Error saving item.",
+      backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      duration: 5000,
+      close: true
+    }).showToast();
+  }
+});
+</script>
+{% endblock %}

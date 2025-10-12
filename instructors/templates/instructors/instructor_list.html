@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Instructor List</h2>
+  <a href="{% url 'instructors:add' %}" class="btn btn-primary mb-3">Add Instructor</a>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Center</th>
+        <th>Type</th>
+        <th>Designation</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Education</th>
+        <th>Contract</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for instructor in instructors %}
+      <tr>
+        <td>{{ instructor.center_id }}</td>
+        <td>{{ instructor.type }}</td>
+        <td>{{ instructor.designation }}</td>
+        <td>{{ instructor.contact_number }}</td>
+        <td>{{ instructor.email }}</td>
+        <td>{{ instructor.education }}</td>
+        <td>{{ instructor.contract_start_date }} - {{ instructor.contract_end_date }}</td>
+        <td>
+          <a href="{% url 'instructors:edit' instructor.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'instructors:delete' instructor.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="text-center">No instructors found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

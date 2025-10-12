@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Batch List</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+        th { background: #17a2b8; color: white; text-align: left; }
+        a.button { background: #17a2b8; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; }
+        a.button:hover { background: #117a8b; }
+    </style>
+</head>
+<body>
+    <h2>Batch List</h2>
+    <a href="{% url 'batch_add' %}" class="button">Add Batch</a>
+    <br><br>
+    <table>
+        <tr>
+            <th>Batch ID</th>
+            <th>Course ID</th>
+            <th>Fiscal Year</th>
+            <th>Participant Target</th>
+            <th>Actions</th>
+        </tr>
+        {% for batch in batches %}
+        <tr>
+            <td><a href="{% url 'batch_detail' batch.pk %}">{{ batch.id }}</a></td>
+            <td>{{ batch.Course_id }}</td>
+            <td>{{ batch.Fiscal_year|date:"Y" }}</td>
+            <td>{{ batch.Participant_target }}</td>
+            <td>
+                <a href="{% url 'batch_participants' batch.pk %}" class="button" style="background: green;">Participants</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No batches found.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

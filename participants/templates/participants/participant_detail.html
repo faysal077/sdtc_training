@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>Participant: {{ participant.name }}</h2>
+  <p><strong>Father's Name:</strong> {{ participant.father_name }}</p>
+  <p><strong>Gender:</strong> {{ participant.gender }}</p>
+  <p><strong>Contact:</strong> {{ participant.contact_number }}</p>
+  <p><strong>Email:</strong> {{ participant.email }}</p>
+  <p><strong>Job Status:</strong> {{ participant.job_status }}</p>
+
+  <a href="{% url 'participant_edit' participant.id %}" class="btn btn-warning">Edit</a>
+  <a href="{% url 'jobhistory_add' participant.id %}" class="btn btn-info">Add Job History</a>
+  <a href="{% url 'employment_toggle' participant.id %}" class="btn btn-dark">Toggle Employment</a>
+
+  <h3 class="mt-4">Job History</h3>
+  <ul>
+    {% for job in participant.job_histories.all %}
+    <li>{{ job.company_name }} - {{ job.designation }} ({{ job.start_date }}{% if job.end_date %} to {{ job.end_date }}{% endif %})</li>
+    {% empty %}
+    <li>No job history available</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

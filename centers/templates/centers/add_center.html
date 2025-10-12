@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Center</title>
+</head>
+<body>
+    <h2>Add New Center</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Center Name:</label><input type="text" name="Center_name" required><br>
+        <label>Establishment Year:</label><input type="datetime-local" name="Establishment_year" required><br>
+        <label>District:</label><input type="text" name="District" required><br>
+        <label>RD Office:</label><input type="text" name="RD_office"><br>
+        <label>Officer in Charge:</label><input type="text" name="Officer_in_charge"><br>
+        <label>Username:</label><input type="text" name="username" required><br>
+        <label>Password:</label><input type="password" name="password" required><br>
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'list' %}">Back</a>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>Delete Instructor</h2>
+  <p>Are you sure you want to delete <strong>{{ instructor.designation }}</strong> ({{ instructor.type }})?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'instructors:list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
