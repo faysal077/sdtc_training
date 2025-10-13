@@ -16,7 +16,7 @@
 
     <div class="top-bar">
         <h2>Participants for Batch {{ batch.id }}</h2>
-        <button id="addParticipantBtn" class="button">+ Add Participant</button>
+        <a href="{% url 'participants:participant_add_ajax' batch.id %}" class="button">+ Add Participant</a>
     </div>
 
     <table id="participantTable">
@@ -43,80 +43,6 @@
         <tr><td colspan="7">No participants found for this batch.</td></tr>
         {% endfor %}
     </table>
-
-    <!-- Modal -->
-    <div class="modal fade" id="participantModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title">Add Participant</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="participantFormContainer">
-            <!-- Form will be loaded here via AJAX -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const addBtn = document.getElementById("addParticipantBtn");
-        const modal = new bootstrap.Modal(document.getElementById("participantModal"));
-
-        addBtn.addEventListener("click", function() {
-            fetch("{% url 'participants:participant_add_ajax' batch.id %}")
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("participantFormContainer").innerHTML = html;
-                modal.show();
-
-                const form = document.getElementById("participantForm");
-                form.addEventListener("submit", function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-
-                    fetch("{% url 'participants:participant_add_ajax' batch.id %}", {
-                        method: "POST",
-                        body: formData,
-                        headers: {"X-Requested-With": "XMLHttpRequest"}
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.getElementById("participantTable").innerHTML = data.html;
-                            modal.hide();
-                            Toastify({
-                                text: "✅ Participant added successfully!",
-                                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-                                gravity: "top", position: "right", duration: 3000
-                            }).showToast();
-                        } else {
-                            document.getElementById("participantFormContainer").innerHTML = data.form_html;
-                            Toastify({
-                                text: "⚠️ Please check inputs.",
-                                backgroundColor: "orange",
-                                gravity: "top", position: "right", duration: 4000
-                            }).showToast();
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        Toastify({
-                            text: "❌ Something went wrong.",
-                            backgroundColor: "red",
-                            gravity: "top", position: "right", duration: 4000
-                        }).showToast();
-                    });
-                });
-            });
-        });
-    });
-    </script>
 
 </body>
 </html>

@@ -1,7 +1,135 @@
-<form id="participantForm" method="post" class="p-3">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <div class="text-end">
-    <button type="submit" class="btn btn-success">Save</button>
-  </div>
-</form>
+{% load static %}
+<div class="card">
+    <h2>{% if form.instance.pk %}Edit Participant{% else %}Add New Participant{% endif %}</h2>
+
+    <form id="participantForm" method="post">
+        {% csrf_token %}
+        <div class="form-grid">
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit">💾 Save Participant</button>
+        <a href="{% url 'batches:batch_participants' batch.id %}" class="btn btn-secondary mt-2">↩️ Cancel</a>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+document.getElementById("participantForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch("", {
+            method: "POST",
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            Toastify({
+                text: "✅ Participant saved successfully!",
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                duration: 3000
+            }).showToast();
+            form.reset();
+            window.location.href = "{% url 'batches:batch_participants' batch.id %}";
+        } else {
+            let errors = "";
+            for (const [key, val] of Object.entries(data.errors)) {
+                errors += `${key}: ${val.join(", ")}\n`;
+            }
+            Toastify({
+                text: errors,
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                duration: 5000
+            }).showToast();
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        Toastify({
+            text: "❌ Something went wrong!",
+            backgroundColor: "red",
+            duration: 3000
+        }).showToast();
+    }
+});
+</script>
+
+<style>
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+}
+
+h2 {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+input, select, textarea {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover { background: #0056b3; }
+
+a.btn-secondary {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    background: #6c757d;
+    color: white;
+}
+
+a.btn-secondary:hover { background: #5a6268; }
+</style>

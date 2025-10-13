@@ -8,7 +8,12 @@ from django.views import View
 from batches.models import Batch
 from .models import Participant, JobHistory
 from .forms import ParticipantForm, JobHistoryForm
-
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from .models import Participant
+from .forms import ParticipantForm
+from batches.models import Batch
 
 # --------------------------
 # Participant List & Detail
@@ -47,12 +52,7 @@ class ParticipantUpdateView(UpdateView):
 # --------------------------
 # AJAX: Add Participant Modal
 # --------------------------
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from .models import Participant
-from .forms import ParticipantForm
-from batches.models import Batch
+
 
 def participant_add_ajax(request, batch_id):
     batch = get_object_or_404(Batch, id=batch_id)
@@ -75,7 +75,10 @@ def participant_add_ajax(request, batch_id):
     else:
         # GET request → return form HTML
         form = ParticipantForm(initial={"batch_id": batch.id, "course_id": batch.Course_id.id})
-        return render(request, "participants/participant_form.html", {"form": form})
+        return render(request, "participants/participant_form_ajax.html", {
+            "form": form,
+            "batch": batch
+        })
 
 
 # --------------------------

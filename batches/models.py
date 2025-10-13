@@ -18,4 +18,4 @@ class Batch(models.Model):
         db_table = "Batch_table"
 
     def __str__(self):
-        return f"Batch {self.id} ({self.Course.course_title})"
+        return f"{self.Course_id.Course_name} - Batch {self.id}"
