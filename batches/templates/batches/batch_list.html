@@ -13,7 +13,7 @@
 </head>
 <body>
     <h2>Batch List</h2>
-    <a href="{% url 'batch_add' %}" class="button">Add Batch</a>
+    <a href="{% url 'batches:batch_add' %}" class="button">Add Batch</a>
     <br><br>
     <table>
         <tr>
@@ -25,12 +25,12 @@
         </tr>
         {% for batch in batches %}
         <tr>
-            <td><a href="{% url 'batch_detail' batch.pk %}">{{ batch.id }}</a></td>
+            <td><a href="{% url 'batches:batch_detail' batch.pk %}">{{ batch.id }}</a></td>
             <td>{{ batch.Course_id }}</td>
             <td>{{ batch.Fiscal_year|date:"Y" }}</td>
             <td>{{ batch.Participant_target }}</td>
             <td>
-                <a href="{% url 'batch_participants' batch.pk %}" class="button" style="background: green;">Participants</a>
+                <a href="{% url 'batches:batch_participants' batch.pk %}" class="button" style="background: orange;">Participants</a>
             </td>
         </tr>
         {% empty %}

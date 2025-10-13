@@ -12,7 +12,7 @@
     <p><strong>Proposed Dates:</strong> {{ batch.Proposed_start_date }} to {{ batch.Proposed_end_date }}</p>
     <p><strong>Actual Dates:</strong> {{ batch.Actual_start_date }} to {{ batch.Actual_end_date }}</p>
 
-    <a href="{% url 'batch_list' %}">Back to List</a> |
-    <a href="{% url 'batch_participants' batch.pk %}">View Participants</a>
+    <a href="{% url 'batches:batch_list' %}">Back to List</a> |
+    <a href="{% url 'batches:batch_participants' batch.pk %}">View Participants</a>
 </body>
 </html>

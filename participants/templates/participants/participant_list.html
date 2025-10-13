@@ -1,38 +1,122 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container">
-  <h2 class="mb-4">Participants</h2>
-  <a href="{% url 'participant_add' %}" class="btn btn-primary mb-3">Add Participant</a>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Center</th>
-        <th>Course</th>
-        <th>Batch</th>
-        <th>Job Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for participant in participants %}
-      <tr>
-        <td><a href="{{ participant.get_absolute_url }}">{{ participant.name }}</a></td>
-        <td>{{ participant.center_id }}</td>
-        <td>{{ participant.course_id }}</td>
-        <td>{{ participant.batch_id }}</td>
-        <td>{{ participant.job_status }}</td>
-        <td>
-          <a href="{% url 'participant_edit' participant.id %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'jobhistory_add' participant.id %}" class="btn btn-sm btn-info">Add Job</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="6" class="text-center">No participants found</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Participant List</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+        th { background: #17a2b8; color: white; text-align: left; }
+        a.button { background: #17a2b8; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; }
+        a.button:hover { background: #117a8b; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <h2>Participants for Batch {{ batch.id }}</h2>
+        <button id="addParticipantBtn" class="button">+ Add Participant</button>
+    </div>
+
+    <table id="participantTable">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Father's Name</th>
+            <th>Gender</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Job Status</th>
+        </tr>
+        {% for p in participants %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.father_name }}</td>
+            <td>{{ p.gender }}</td>
+            <td>{{ p.contact_number }}</td>
+            <td>{{ p.email }}</td>
+            <td>{{ p.job_status }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No participants found for this batch.</td></tr>
+        {% endfor %}
+    </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="participantModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Add Participant</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="participantFormContainer">
+            <!-- Form will be loaded here via AJAX -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const addBtn = document.getElementById("addParticipantBtn");
+        const modal = new bootstrap.Modal(document.getElementById("participantModal"));
+
+        addBtn.addEventListener("click", function() {
+            fetch("{% url 'participants:participant_add_ajax' batch.id %}")
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("participantFormContainer").innerHTML = html;
+                modal.show();
+
+                const form = document.getElementById("participantForm");
+                form.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+
+                    fetch("{% url 'participants:participant_add_ajax' batch.id %}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {"X-Requested-With": "XMLHttpRequest"}
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById("participantTable").innerHTML = data.html;
+                            modal.hide();
+                            Toastify({
+                                text: "✅ Participant added successfully!",
+                                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                                gravity: "top", position: "right", duration: 3000
+                            }).showToast();
+                        } else {
+                            document.getElementById("participantFormContainer").innerHTML = data.form_html;
+                            Toastify({
+                                text: "⚠️ Please check inputs.",
+                                backgroundColor: "orange",
+                                gravity: "top", position: "right", duration: 4000
+                            }).showToast();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        Toastify({
+                            text: "❌ Something went wrong.",
+                            backgroundColor: "red",
+                            gravity: "top", position: "right", duration: 4000
+                        }).showToast();
+                    });
+                });
+            });
+        });
+    });
+    </script>
+
+</body>
+</html>

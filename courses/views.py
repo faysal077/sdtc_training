@@ -1,5 +1,11 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
+from rest_framework.generics import get_object_or_404
+# Placeholder for showing batches under a course
+from django.views import View
+from django.shortcuts import render
+from batches.models import Batch
+from django.shortcuts import render, get_object_or_404
 from .models import Course
 from .forms import CourseForm
 from django.http import JsonResponse
@@ -54,16 +60,21 @@ class CourseUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-# Placeholder for showing batches under a course
-from django.views import View
-from django.shortcuts import render
 
 
 class CourseBatchesView(View):
-    template_name = "courses/course_batches.html"
+    template_name = "batches/batch_list.html"
 
     def get(self, request, pk):
-        # You can later replace this with actual Batch model query
-        course = Course.objects.get(pk=pk)
-        batches = []  # Replace with actual related batches
-        return render(request, self.template_name, {"course": course, "batches": batches})
+        course = get_object_or_404(Course, pk=pk)
+        batches = Batch.objects.filter(Course_id=course.id).order_by('-Fiscal_year')
+        return render(request, self.template_name, {
+            "course": course,
+            "batches": batches
+        })
+
+    # def get(self, request, pk):
+    #     # You can later replace this with actual Batch model query
+    #     course = Course.objects.get(pk=pk)
+    #     batches = []  # Replace with actual related batches
+    #     return render(request, self.template_name, {"course": course, "batches": batches})

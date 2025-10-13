@@ -29,7 +29,7 @@
             <td>{{ course.Batch_number }}</td>
             <td>
                 <a href="{% url 'courses:course_edit' course.pk %}" class="button">Edit</a>
-                <a href="{% url 'courses:course_batches' course.pk %}" class="button" style="background: green;">Batches</a>
+                <a href="{% url 'batches:batches_by_course' course.id %}" class="button" style="background: green;">Batches</a>
             </td>
         </tr>
         {% empty %}
