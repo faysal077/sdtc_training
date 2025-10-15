@@ -9,5 +9,6 @@ class CourseForm(forms.ModelForm):
             "Course_name": forms.TextInput(attrs={"class": "form-control"}),
             "Course_duration": forms.TextInput(attrs={"class": "form-control"}),
             "Batch_number": forms.NumberInput(attrs={"class": "form-control"}),
-            "Center_id": forms.NumberInput(attrs={"class": "form-control"}),
+            # Center_id is readonly because it will be auto-filled
+            "Center_id": forms.NumberInput(attrs={"class": "form-control", "readonly": "readonly"}),
         }

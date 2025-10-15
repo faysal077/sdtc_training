@@ -13,7 +13,10 @@
 </head>
 <body>
     <h2>Course List</h2>
-    <a href="{% url 'courses:course_add' %}" class="button">Add Course</a>
+    <a href="{% url 'courses:course_add' %}?center_id={{ center.id }}" class="button">
+    + Add Course
+</a>
+
     <br><br>
     <table>
         <tr>

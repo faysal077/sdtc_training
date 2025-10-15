@@ -1,21 +1,19 @@
-from django.views.generic import ListView, DetailView, CreateView
-from django.views import View
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from .models import Batch
-from .forms import BatchForm
+from datetime import datetime
+
+from django.views.generic import DetailView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView
+from centers.models import Center
 from .forms import BatchForm
 from django.views.generic import ListView
-from django.shortcuts import get_object_or_404
 from courses.models import Course
-from .models import Batch
 from django.urls import reverse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
+from participants.models import Participant
 from .models import Batch
-from participants.models import Participant  # ✅ import your Participant model
-
 
 class BatchByCourseView(ListView):
     model = Batch
@@ -46,38 +44,73 @@ class BatchDetailView(DetailView):
     context_object_name = "batch"
 
 
+@method_decorator(login_required, name='dispatch')
 class BatchCreateView(CreateView):
     model = Batch
     form_class = BatchForm
     template_name = "batches/batch_form.html"
 
-    def form_valid(self, form):
+    def get_initial(self):
+        """Auto-fill Center_id and Course_id in form."""
+        initial = super().get_initial()
         course_id = self.request.GET.get("course_id")
+        center_id = getattr(self.request.user, "center_id", None)
+
         if course_id:
-            form.instance.Course_id_id = course_id
+            initial["Course_id"] = course_id
+        if center_id:
+            initial["Center_id"] = center_id
+        return initial
+
+    def form_valid(self, form):
+        """Auto-assign Center, Course, and Fiscal Year before saving."""
+        course_id = self.request.GET.get("course_id")
+        center_id = getattr(self.request.user, "center_id", None)
+
+        # Assign related fields automatically
+        if course_id:
+            form.instance.Course_id = get_object_or_404(Course, id=course_id)
+        if center_id:
+            form.instance.Center_id = get_object_or_404(Center, id=center_id)
+
+        # --- Auto-calculate Fiscal Year ---
+        start_date = form.cleaned_data.get("Actual_start_date")
+        end_date = form.cleaned_data.get("Actual_end_date")
+
+        if start_date:
+            fiscal_year_start = self.get_fiscal_year_start(start_date)
+            fiscal_year_end = fiscal_year_start + 1
+            # Store in readable format like "2024–2025"
+            form.instance.Fiscal_year = datetime(fiscal_year_start, 7, 1, 0, 0, 0)
+
         self.object = form.save()
 
+        # --- AJAX success response ---
         if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return JsonResponse({"success": True, "message": "✅ Batch saved successfully!"})
-        else:
-            return super().form_valid(form)
+            return JsonResponse({
+                "success": True,
+                "message": "✅ Batch saved successfully!"
+            })
+
+        return super().form_valid(form)
+
+    def get_fiscal_year_start(self, start_date):
+        """Return the start year of the fiscal year (July–June)."""
+        return start_date.year if start_date.month >= 7 else start_date.year - 1
 
     def form_invalid(self, form):
+        """Handle AJAX form errors."""
         if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return JsonResponse({"success": False, "errors": form.errors})
-        else:
-            return super().form_invalid(form)
+            return JsonResponse({
+                "success": False,
+                "errors": form.errors
+            })
+        return super().form_invalid(form)
 
     def get_success_url(self):
-        course_id = self.object.Course_id.id
-        return reverse("batches:batches_by_course", args=[course_id])
+        """Redirect to batch list by course after save."""
+        return reverse("batches:batches_by_course", args=[self.object.Course_id.id])
 
-
-# batches/views.py
-from django.shortcuts import render, get_object_or_404
-from django.views import View
-from participants.models import Participant
-from .models import Batch
 
 class BatchParticipantsView(View):
     template_name = "participants/participant_list.html"

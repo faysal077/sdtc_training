@@ -6,29 +6,102 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 30px; }
-        .card { background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; width: 600px; margin: auto; }
-        h2 { background: #28a745; color: white; padding: 10px; border-radius: 8px; text-align: center; }
-        button, a { display: block; width: 100%; text-align: center; margin-top: 10px; padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; }
-        button { background: #28a745; color: white; border: none; }
-        button:hover { background: #218838; }
-        a { background: #6c757d; color: white; }
-        a:hover { background: #5a6268; }
-        form p { margin-bottom: 12px; }
-        input, select, textarea { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            width: 80%;
+            max-width: 900px;
+            margin: auto;
+        }
+        h2 {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px 30px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-top: 3px;
+            font-size: 15px;
+        }
+        button, a {
+            grid-column: span 2;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        a {
+            background: #6c757d;
+            color: white;
+        }
+        a:hover {
+            background: #5a6268;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="card">
         <h2>{% if form.instance.pk %}Edit Batch{% else %}Add New Batch{% endif %}</h2>
-
         <form id="batchForm" method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">💾 Save Batch</button>
-        </form>
 
-        <a href="{% url 'batches:batch_list' %}">↩️ Back</a>
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <small style="color: red;">{{ field.errors|join:", " }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit">💾 Save Batch</button>
+            <a href="{% url 'batches:batch_list' %}">↩️ Back</a>
+        </form>
     </div>
 
     <script>
@@ -69,7 +142,7 @@
         } catch (error) {
             console.error("Error:", error);
             Toastify({
-                text: "Something went wrong!",
+                text: "❌ Something went wrong!",
                 backgroundColor: "red",
                 duration: 3000
             }).showToast();
@@ -78,4 +151,3 @@
     </script>
 </body>
 </html>
-
