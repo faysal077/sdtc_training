@@ -10,6 +10,7 @@ class Inventory(models.Model):
     condition = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
 
+
     class Meta:
         db_table = "Inventory"  # Use your existing table
 

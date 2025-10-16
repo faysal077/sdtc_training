@@ -8,6 +8,7 @@ class Center(models.Model):
     RD_office = models.CharField(max_length=255)
     Officer_in_charge = models.CharField(max_length=255)
 
+
     class Meta:
         db_table = "Center"
 

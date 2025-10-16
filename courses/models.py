@@ -7,6 +7,7 @@ class Course(models.Model):
     Course_duration = models.CharField(max_length=255)
     Batch_number = models.IntegerField()
 
+
     class Meta:
         db_table = "Course_table"  # Explicitly link to your existing table
 

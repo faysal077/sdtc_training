@@ -25,6 +25,7 @@ class Participant(models.Model):
     date_of_birth = models.DateField()
     job_status = models.CharField(max_length=255, default="Unemployed")
 
+
     class Meta:
         db_table = "Participant_table"
 

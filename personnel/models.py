@@ -10,6 +10,7 @@ class PersonalInfo(models.Model):
     contact_number = models.CharField(max_length=255)
     email = models.EmailField()
 
+
     class Meta:
         db_table = "Personal_info"  # Maps to your existing table
 

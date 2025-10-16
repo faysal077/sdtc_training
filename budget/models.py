@@ -11,6 +11,7 @@ class Budget(models.Model):
     achivement = models.CharField(max_length=255, blank=True, null=True)
     requirement = models.CharField(max_length=255, blank=True, null=True)
 
+
     class Meta:
         db_table = "Budget"  # Maps to your existing table
 

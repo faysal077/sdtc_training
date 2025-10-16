@@ -33,17 +33,17 @@ class BatchForm(forms.ModelForm):
             "Participant_target": forms.NumberInput(attrs={"class": "form-control"}),
             "Course_target": forms.NumberInput(attrs={"class": "form-control"}),
 
-            "Proposed_start_date": forms.DateTimeInput(attrs={
-                "type": "datetime-local", "class": "form-control"
+            "Proposed_start_date": forms.DateInput(attrs={
+                "type": "date", "class": "form-control"
             }),
-            "Proposed_end_date": forms.DateTimeInput(attrs={
-                "type": "datetime-local", "class": "form-control"
+            "Proposed_end_date": forms.DateInput(attrs={
+                "type": "date", "class": "form-control"
             }),
-            "Actual_start_date": forms.DateTimeInput(attrs={
-                "type": "datetime-local", "class": "form-control"
+            "Actual_start_date": forms.DateInput(attrs={
+                "type": "date", "class": "form-control"
             }),
-            "Actual_end_date": forms.DateTimeInput(attrs={
-                "type": "datetime-local", "class": "form-control"
+            "Actual_end_date": forms.DateInput(attrs={
+                "type": "date", "class": "form-control"
             }),
         }
 

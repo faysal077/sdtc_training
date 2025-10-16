@@ -149,5 +149,30 @@
         }
     });
     </script>
+    <script>
+        function calculateFiscalYearFromActual() {
+            const actualStart = document.getElementById("id_Actual_start_date")?.value;
+
+            if (actualStart) {
+                const startDate = new Date(actualStart);
+                const month = startDate.getMonth() + 1;
+                const fiscalStart = (month >= 7) ? startDate.getFullYear() : startDate.getFullYear() - 1;
+                const fiscalYear = `${fiscalStart}-${fiscalStart + 1}`;
+
+                const fiscalInput = document.getElementById("id_Fiscal_year");
+                if (fiscalInput) {
+                    fiscalInput.value = fiscalYear;
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const actualStartField = document.getElementById("id_Actual_start_date");
+            const actualEndField = document.getElementById("id_Actual_end_date");
+            if (actualStartField) actualStartField.addEventListener("change", calculateFiscalYearFromActual);
+            if (actualEndField) actualEndField.addEventListener("change", calculateFiscalYearFromActual);
+        });
+    </script>
+
 </body>
 </html>

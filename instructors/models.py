@@ -12,6 +12,7 @@ class Instructor(models.Model):
     contract_start_date = models.DateField()
     contract_end_date = models.DateField()
 
+
     def __str__(self):
         return f"{self.designation} ({self.type})"
 

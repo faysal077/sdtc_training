@@ -23,6 +23,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)  # required for Django admin
     is_superuser = models.BooleanField(default=False)
 
+
     objects = AccountManager()
 
     USERNAME_FIELD = 'username'
